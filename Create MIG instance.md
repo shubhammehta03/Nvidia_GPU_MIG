@@ -20,9 +20,11 @@ The GPUs can be selected using comma separated GPU indexes, PCI Bus IDs or UUIDs
 Before creating GPU slices, MIG mode can be enabled on a per-GPU basis with the following command:
 
 ```# nvidia-smi -i <index no> -mig 1    #index no can be 0,1 depending upon above command ```
+
 ```# nvidia-smi -mig 1                  # Enable MIG mode on all GPUs ```
 
 To reset GPU:
+
 ``` #nvidia-smi --gpu-reset ```
 
 ### 2. List GPU Instance Profiles:
@@ -51,6 +53,7 @@ Without creating GPU instances (and corresponding compute instances), CUDA workl
 The following example shows how the user can create GPU instances (and corresponding compute instances). In this example, the user can create two GPU instances (of type 1g.10gb), with each GPU instance having half of the available compute and memory capacity.
 
 ``` # nvidia-smi mig -cgi 19,1g.10gb -i 0 -C ```
+
 - Create GPU Instance to create a GPU instance with a specified profile.
 - 19,1g.10gb: Specifies the GPU instance profile.
 -i 0: Specifies the GPU index. In this case, it’s creating the instance on GPU 0.
@@ -59,6 +62,7 @@ The following example shows how the user can create GPU instances (and correspon
 ### 4. Now list the available GPU instances:
 
 ``` #  nvidia-smi mig -lgi ```
+
 This will only show GPU instances
 
 Now verify that the GIs and corresponding CIs are created:
@@ -116,7 +120,7 @@ NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap255
 NodeName=rdgpu01 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=192032  Feature=gpu Gres=gpu:1g.10gb:14
 NodeName=rdgpu02 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=192032  Feature=gpu Gres=gpu:1g.10gb:14
 
-** Note: TaskPlugin=task/affinity,task/cgroup and cgroup should be enabled in gpu 
+Note: TaskPlugin=task/affinity,task/cgroup and cgroup should be enabled in gpu 
 
 ### GPU Utilization Metrics
 NVML (and nvidia-smi) does not support attribution of utilization metrics to MIG devices. From the previous example, the utilization is displayed as N/A when running CUDA programs:
@@ -128,17 +132,22 @@ Once the GPU is in MIG mode, GIs and CIs can be configured dynamically. The foll
 Note: If the intention is to destroy all the CIs and GIs, then this can be accomplished with the following commands:
 
 ``` # nvidia-smi mig -dci && sudo nvidia-smi mig -dgi ```
+
 To delete the specific CIs created under GI 1.
 
 ``` # nvidia-smi mig -dci -ci 0,1,2 -gi 1 ```
+
 Now the GIs have to be deleted:
+
 ``` # nvidia-smi mig -dgi ```
 
 
 To see all usage of GPU:
+
 ``` # nvidia-smi -q [-i 0] ```
 
 Check nvml is there:
+
 ``` # rpm -qlp slurm-slurmd-23.11.5-1.el8.x86_64 | grep nvml ```
 
 
@@ -255,5 +264,4 @@ For example:
 SMs allocated per instance: 108 SMs÷7≈14SMs.\text{108 SMs} \div 7 \approx 14 SMs. 
 Larger profiles like 2g.20gb or 4g.40gb allocate more SMs.
 ________________________________________
-Let me know if you'd like to dive deeper into the A100’s architecture or performance benchmarks! 😊
 
