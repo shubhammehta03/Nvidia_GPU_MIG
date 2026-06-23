@@ -19,23 +19,23 @@ The GPUs can be selected using comma separated GPU indexes, PCI Bus IDs or UUIDs
 
 Before creating GPU slices, MIG mode can be enabled on a per-GPU basis with the following command:
 
-```# nvidia-smi -i <index no> -mig 1    #index no can be 0,1 depending upon above command
-```# nvidia-smi -mig 1                  # Enable MIG mode on all GPUs
+```# nvidia-smi -i <index no> -mig 1    #index no can be 0,1 depending upon above command ```
+```# nvidia-smi -mig 1                  # Enable MIG mode on all GPUs ```
 
 To reset GPU:
-#nvidia-smi --gpu-reset
+``` #nvidia-smi --gpu-reset ```
 
 ### 2. List GPU Instance Profiles:
 The NVIDIA driver provides a number of profiles that users can opt-in for when configuring the MIG feature in A100. The profiles are the sizes and capabilities of the GPU instances that can be created by the user. The driver also provides information about the placements, which indicate the type and number of instances that can be created.
 
-```# nvidia-smi mig -lgip -i 0
+``` # nvidia-smi mig -lgip -i 0 ```
 It will list GPU instance profiles available for creating Multi-Instance GPU (MIG) instances on an NVIDIA GPU
 
 Name: Describes the profile (e.g., 1g.10gb means 1 GPU slice with 10 GB memory).
 
 List the possible placements available using the following command. The syntax of the placement is {<index>}:<GPU Slice Count> and shows the placement of the instances on the GPU. The placement index shown indicates how the profiles are mapped on the GPU as shown in the figure:
 
-```# nvidia-smi mig -lgipp [-i 0] ```
+``` # nvidia-smi mig -lgipp [-i 0] ```
 
 The command shows that the user can create two instances of type 3g.40gb (profile ID 9) or seven instances of 1g.10gb (profile ID 19).
 
@@ -50,7 +50,7 @@ Without creating GPU instances (and corresponding compute instances), CUDA workl
 
 The following example shows how the user can create GPU instances (and corresponding compute instances). In this example, the user can create two GPU instances (of type 1g.10gb), with each GPU instance having half of the available compute and memory capacity.
 
-``` # nvidia-smi mig -cgi 19,1g.10gb -i 0 -C
+``` # nvidia-smi mig -cgi 19,1g.10gb -i 0 -C ```
 - Create GPU Instance to create a GPU instance with a specified profile.
 - 19,1g.10gb: Specifies the GPU instance profile.
 -i 0: Specifies the GPU index. In this case, it’s creating the instance on GPU 0.
@@ -58,15 +58,15 @@ The following example shows how the user can create GPU instances (and correspon
 
 ### 4. Now list the available GPU instances:
 
-#  nvidia-smi mig -lgi
+``` #  nvidia-smi mig -lgi ```
 This will only show GPU instances
 
 Now verify that the GIs and corresponding CIs are created:
 
-```# nvidia-smi
+``` # nvidia-smi ```
 
 To create seven instances with equal memory and available compute:
-# nvidia-smi mig -cgi 19,19,19,19,19,19,19 -i 0 -C
+``` # nvidia-smi mig -cgi 19,19,19,19,19,19,19 -i 0 -C ```
 
 ### 5. Integrating MIG with Slurm GRES
 
@@ -102,7 +102,6 @@ NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap102
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap111
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap120
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap129
-```
 # GPU 1 MIG instances
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap201
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap210
@@ -111,8 +110,9 @@ NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap228
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap237
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap246
 NodeName=rdgpu02 Name=gpu Type=1g.10gb File=/dev/nvidia-caps/nvidia-cap255
+```
 
-In slurm.conf:
+### In slurm.conf:
 NodeName=rdgpu01 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=192032  Feature=gpu Gres=gpu:1g.10gb:14
 NodeName=rdgpu02 CPUs=48 Boards=1 SocketsPerBoard=2 CoresPerSocket=24 ThreadsPerCore=1 RealMemory=192032  Feature=gpu Gres=gpu:1g.10gb:14
 
@@ -127,22 +127,23 @@ Once the GPU is in MIG mode, GIs and CIs can be configured dynamically. The foll
 
 Note: If the intention is to destroy all the CIs and GIs, then this can be accomplished with the following commands:
 
-# nvidia-smi mig -dci && sudo nvidia-smi mig -dgi
+``` # nvidia-smi mig -dci && sudo nvidia-smi mig -dgi ```
 To delete the specific CIs created under GI 1.
 
-# nvidia-smi mig -dci -ci 0,1,2 -gi 1
+``` # nvidia-smi mig -dci -ci 0,1,2 -gi 1 ```
 Now the GIs have to be deleted:
-# nvidia-smi mig -dgi
+``` # nvidia-smi mig -dgi ```
 
 
 To see all usage of GPU:
-# nvidia-smi -q [-i 0]
+``` # nvidia-smi -q [-i 0] ```
 
 Check nvml is there:
- rpm -qlp slurm-slurmd-23.11.5-1.el8.x86_64 | grep nvml
+``` # rpm -qlp slurm-slurmd-23.11.5-1.el8.x86_64 | grep nvml ```
 
 
 In gres.conf:
+```
 #RDGPU01: 
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia0,/dev/nvidia-caps/nvidia-cap66,/dev/nvidia-caps/nvidia-cap67 AutoDetect=nvml
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia0,/dev/nvidia-caps/nvidia-cap75,/dev/nvidia-caps/nvidia-cap76 AutoDetect=nvml
@@ -159,9 +160,10 @@ Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia1,/dev/nvid
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia1,/dev/nvidia-caps/nvidia-cap246,/dev/nvidia-caps/nvidia-cap247 AutoDetect=nvml
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia1,/dev/nvidia-caps/nvidia-cap255,/dev/nvidia-caps/nvidia-cap256 AutoDetect=nvml
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia1,/dev/nvidia-caps/nvidia-cap264,/dev/nvidia-caps/nvidia-cap265 AutoDetect=nvml
-
+```
 
 #RDGPU02: 
+```
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia-caps/nvidia-cap66,/dev/nvidia-caps/nvidia-cap67 AutoDetect=nvml
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia-caps/nvidia-cap75,/dev/nvidia-caps/nvidia-cap76 AutoDetect=nvml
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia-caps/nvidia-cap84,/dev/nvidia-caps/nvidia-cap85 AutoDetect=nvml
@@ -176,8 +178,9 @@ Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia-caps/nvidi
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia-caps/nvidia-cap237,/dev/nvidia-caps/nvidia-cap238
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia-caps/nvidia-cap246,/dev/nvidia-caps/nvidia-cap247
 Name=gpu Type=nvidia_a100_80gb_pcie_1g.10gb MultipleFiles=/dev/nvidia-caps/nvidia-cap255,/dev/nvidia-caps/nvidia-cap256
+```
 
-Shortform meaning:
+** Shortform meaning:
 -mig    : --multi-instance-gpu= Enable or disable Multi Instance GPU: 0/DISABLED, 1/ENABLED.                               			Requires root.
 -cgi    : create gpu instances
 -C 	    : Enables compute mode for the instance, which means it will be configured to run 		compute workloads (e.g., CUDA, AI, HPC).
