@@ -1,7 +1,7 @@
 # NVIDIA Multi-Instance GPU (MIG) steps:
 This repository provides step-by-step guides for enabling and partitioning NVIDIA GPUs into **Multi-Instance GPU (MIG)** instances.
 
-## 🛠️ Supported Hardware & Prerequisites
+## Supported Hardware & Prerequisites
 
 * **Supported GPUs:** NVIDIA A100, H100, H200 (SXM and PCIe variants)
 * **OS / Environment:** Enterprise Linux (Rocky Linux / AlmaLinux / RHEL 8 or 9), Ubuntu Server
@@ -12,7 +12,7 @@ This repository provides step-by-step guides for enabling and partitioning NVIDI
 By default, MIG mode is not enabled on the GPU. For example, running nvidia-smi shows that MIG mode is disabled:
 
 ## Getting Started
-###1. Enable MIG Mode
+### 1. Enable MIG Mode
 First Verify, your GPU index and current MIG status:
 nvidia-smi --query-gpu=index,name,mig.mode.current --format=csv
 The GPUs can be selected using comma separated GPU indexes, PCI Bus IDs or UUIDs. If no GPU ID is specified, then MIG mode is applied to all the GPUs on the system. When MIG is enabled on the GPU, depending on the GPU product, the driver will attempt to reset the GPU so that MIG mode can take effect. 
@@ -25,7 +25,7 @@ Before creating GPU slices, MIG mode can be enabled on a per-GPU basis with the 
 To reset GPU:
 #nvidia-smi --gpu-reset
 
-###2. List GPU Instance Profiles:
+### 2. List GPU Instance Profiles:
 The NVIDIA driver provides a number of profiles that users can opt-in for when configuring the MIG feature in A100. The profiles are the sizes and capabilities of the GPU instances that can be created by the user. The driver also provides information about the placements, which indicate the type and number of instances that can be created.
 
 # nvidia-smi mig -lgip -i 0
@@ -35,11 +35,11 @@ Name: Describes the profile (e.g., 1g.10gb means 1 GPU slice with 10 GB memory).
 
 List the possible placements available using the following command. The syntax of the placement is {<index>}:<GPU Slice Count> and shows the placement of the instances on the GPU. The placement index shown indicates how the profiles are mapped on the GPU as shown in the figure:
 
-# nvidia-smi mig -lgipp [-i 0]
+``` bash nvidia-smi mig -lgipp [-i 0] ```
 
 The command shows that the user can create two instances of type 3g.40gb (profile ID 9) or seven instances of 1g.10gb (profile ID 19).
 
-###3. Creating GPU Instances:
+### 3. Creating GPU Instances:
 Before starting to use MIG, the user needs to create GPU instances using the -cgi option. One of three options can be used to specify the instance profiles to be created:
 1. Profile ID (e.g. 9, 14, 5)
 2. Short name of the profile (such as 3g.40gb)
